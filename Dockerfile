@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -y \
 	automake \
 	autopoint \
 	bc \
+	binutils-dev \
 	bison \
 	build-essential \
 	clang-10 \
@@ -52,9 +53,11 @@ RUN apt-get update && apt-get install -y \
 	flex \
 	gdisk \
 	git \
+	gnu-efi \
 	graphviz \
 	grub-efi-amd64-bin \
 	grub-efi-ia32-bin \
+	help2man \
 	iasl \
 	imagemagick \
 	iputils-ping \
@@ -76,6 +79,7 @@ RUN apt-get update && apt-get install -y \
 	openssl \
 	picocom \
 	parted \
+	pkg-config \
 	python \
 	python-dev \
 	python-pip \
@@ -90,6 +94,7 @@ RUN apt-get update && apt-get install -y \
 	sudo \
 	swig \
 	util-linux \
+	uuid-dev \
 	virtualenv \
 	zip \
 	&& rm -rf /var/lib/apt/lists/*
@@ -99,6 +104,16 @@ RUN wget http://mirrors.kernel.org/ubuntu/pool/main/m/mpfr4/libmpfr4_3.1.4-1_amd
 
 # Manually install a new enough version of efitools (must be v1.5.2 or later)
 RUN wget http://mirrors.kernel.org/ubuntu/pool/universe/e/efitools/efitools_1.8.1-0ubuntu2_amd64.deb && sudo dpkg -i efitools_1.8.1-0ubuntu2_amd64.deb && rm efitools_1.8.1-0ubuntu2_amd64.deb
+
+# Manually install a new enough version of sbsigntools (must be v0.9.4 or later)
+RUN git clone https://git.kernel.org/pub/scm/linux/kernel/git/jejb/sbsigntools.git /tmp/sbsigntools && \
+	cd /tmp/sbsigntools && \
+	git checkout -b latest v0.9.4 && \
+	./autogen.sh && \
+	./configure && \
+	make && \
+	make install && \
+	rm -rf /tmp/sbsigntools
 
 # Build GRUB UEFI targets for ARM & RISC-V, 32-bit and 64-bit
 RUN git clone git://git.savannah.gnu.org/grub.git /tmp/grub && \
